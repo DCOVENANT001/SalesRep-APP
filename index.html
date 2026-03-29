@@ -2220,20 +2220,21 @@ async function loadDashData() {
     });
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
     const data = await resp.json();
-allRows = (data.rows || []).map(r => {
-  const parts = (r.timestamp || '').split(' ');
-  const datePart = parts[0] || '';
-  const timePart = parts[1] || '';
-  const dp = datePart.split('/');
-  return {
-    ...r,
-    date:  datePart,
-    time:  timePart,
-    day:   parseInt(dp[0]) || 0,
-    month: parseInt(dp[1]) || 0,
-    year:  parseInt(dp[2]) || 0
-  };
-});
+    const rawRows = Array.isArray(data) ? (data[0]?.rows || []) : (data.rows || []);
+    allRows = rawRows.map(r => {
+      const parts = (r.timestamp || '').split(' ');
+      const datePart = parts[0] || '';
+      const timePart = parts[1] || '';
+      const dp = datePart.split('/');
+      return {
+        ...r,
+        date:  datePart,
+        time:  timePart,
+        day:   parseInt(dp[0]) || 0,
+        month: parseInt(dp[1]) || 0,
+        year:  parseInt(dp[2]) || 0
+      };
+    });
     $('dash-loading').style.display = 'none';
     $('last-upd').textContent = 'Updated ' + new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
     updateQueriesBadge();
@@ -2273,12 +2274,7 @@ function renderDashTab(tab) {
 
 // ── DASHBOARD HELPERS ──
 function getWAT() { return new Date(new Date().getTime() + 3600000); }
-function fmtDate(d) {
-  const dd = String(d.getDate()).padStart(2,'0');
-  const mm = String(d.getMonth()+1).padStart(2,'0');
-  const yyyy = d.getFullYear();
-  return `${dd}/${mm}/${yyyy}`;
-}
+function fmtDate(d) { return d.toLocaleDateString('en-GB'); }
 function parseRowDate(row) { return new Date(`${row.year}-${String(row.month).padStart(2,'0')}-${String(row.day).padStart(2,'0')}`); }
 function getType(r) { return (r.type || r.Type || 'SALE').toString().trim().toUpperCase(); }
 
