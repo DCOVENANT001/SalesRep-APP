@@ -2273,7 +2273,12 @@ function renderDashTab(tab) {
 
 // ── DASHBOARD HELPERS ──
 function getWAT() { return new Date(new Date().getTime() + 3600000); }
-function fmtDate(d) { return d.toLocaleDateString('en-GB'); }
+function fmtDate(d) {
+  const dd = String(d.getDate()).padStart(2,'0');
+  const mm = String(d.getMonth()+1).padStart(2,'0');
+  const yyyy = d.getFullYear();
+  return `${dd}/${mm}/${yyyy}`;
+}
 function parseRowDate(row) { return new Date(`${row.year}-${String(row.month).padStart(2,'0')}-${String(row.day).padStart(2,'0')}`); }
 function getType(r) { return (r.type || r.Type || 'SALE').toString().trim().toUpperCase(); }
 
