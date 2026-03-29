@@ -2209,7 +2209,15 @@ async function loadDashData() {
   document.querySelectorAll('.dsec').forEach(s => s.classList.remove('show'));
   dashLoadErr = false;
   try {
-    const resp = await fetch(CLIENT.dataUrl);
+    const resp = await fetch(CLIENT.dataUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: CLIENT._clientEmail,
+        pin: CLIENT.dashboardPin,
+        clientId: CLIENT.clientId
+      })
+    });
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
     const data = await resp.json();
     allRows = data.rows || [];
